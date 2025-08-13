@@ -7,5 +7,6 @@
   "codeowners": ["@KonstBessonov"],
   "requirements": [],
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/KonstBessonov/ha-llm-connector/issues"
+  "issue_tracker": "https://github.com/KonstBessonov/ha-llm-connector/issues",
+  "config_flow": true
 }
