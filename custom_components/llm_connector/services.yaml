@@ -1,27 +1,32 @@
 ask:
-  description: Send a prompt to the LLM with chat history
-  target: {}
+  name: Отправить запрос к LLM
+  description: Отправка запроса к LLM с сохранением контекста
+  target: false
   fields:
     user_id:
-      description: Identifier of the user (chat_id or HA user ID)
-      example: "123456789"
+      name: Идентификатор пользователя
+      description: Уникальный идентификатор пользователя (chat_id или HA user ID)
       required: true
+      example: "123456789"
       selector:
         text:
     prompt:
-      description: The text prompt to send to the LLM
-      example: "What is the weather today?"
+      name: Запрос
+      description: Текстовый запрос к LLM
       required: true
+      example: "Какая сегодня погода?"
       selector:
         text:
 
 reset_history:
-  description: Reset the chat history for a user
-  target: {}
+  name: Сброс истории
+  description: Сброс истории чата для пользователя
+  target: false
   fields:
     user_id:
-      description: Identifier of the user
-      example: "123456789"
+      name: Идентификатор пользователя
+      description: Уникальный идентификатор пользователя
       required: true
+      example: "123456789"
       selector:
         text:

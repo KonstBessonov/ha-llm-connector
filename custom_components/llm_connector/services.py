@@ -27,6 +27,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     async def handle_ask(call: ServiceCall) -> Dict[str, Any]:
         """Обработка сервиса ask."""
         try:
+            _LOGGER.info("Получен вызов сервиса ask: %s", call.data)
+            
             raw_user_id = call.data["user_id"]
             prompt = call.data["prompt"]
             
@@ -36,12 +38,21 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             
             user_id = sanitize_user_id(raw_user_id)
             
-            _LOGGER.info("Запрос от пользователя %s: %s", user_id, prompt[:100] + "..." if len(prompt) > 100 else prompt)
+            _LOGGER.info("Запрос от пользователя %s: %s", user_id, prompt)
             
             # Получение данных интеграции
-            domain_data = hass.data[DOMAIN]
+            domain_data = hass.data.get(DOMAIN)
+            if not domain_data:
+                raise Exception("Интеграция не загружена")
+            
+            _LOGGER.info("Данные интеграции: %s", domain_data.keys())
+            
+            # Проверка наличия entry
+            if "entry" not in domain_data:
+                raise Exception("Интеграция не настроена через config flow")
+            
             entry = domain_data["entry"]
-            chat_manager = domain_data["chat_manager"]
+            _LOGGER.info("Данные entry: %s", entry.data)
             
             # Получение конфигурации
             base_url = entry.data.get("base_url")
@@ -49,20 +60,30 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             model = entry.data.get("model")
             max_history = entry.data.get("max_history", 0)
             
+            _LOGGER.info("Конфигурация: base_url=%s, model=%s", base_url, model)
+            
             # Валидация базового URL
             if not base_url:
                 raise Exception("Не указан базовый URL")
+            
+            # Получение менеджера чата
+            chat_manager = domain_data["chat_manager"]
+            if not chat_manager:
+                raise Exception("Менеджер чата не инициализирован")
             
             # Создание клиента LLM
             async with LLMClient(base_url, api_key, model) as client:
                 # Получение истории
                 history = chat_manager.get_history(user_id)
+                _LOGGER.info("История пользователя %s: %s сообщений", user_id, len(history))
                 
                 # Ограничение истории, если задано
                 if max_history > 0 and len(history) > max_history:
                     history = history[-max_history:]
+                    _LOGGER.info("История ограничена до %s сообщений", max_history)
                 
                 # Отправка запроса к LLM
+                _LOGGER.info("Отправка запроса к LLM...")
                 response = await client.ask(prompt, history, model)
                 
                 # Сохранение в истории
@@ -70,7 +91,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
                 chat_manager.add_message(user_id, "assistant", response)
                 await chat_manager.async_save()
                 
-                _LOGGER.info("Ответ пользователю %s: %s", user_id, response[:100] + "..." if len(response) > 100 else response)
+                _LOGGER.info("Ответ пользователю %s: %s", user_id, response)
                 
                 return {"response": response}
                 
@@ -82,6 +103,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     async def handle_reset_history(call: ServiceCall) -> None:
         """Обработка сервиса reset_history."""
         try:
+            _LOGGER.info("Получен вызов сервиса reset_history: %s", call.data)
+            
             raw_user_id = call.data["user_id"]
             
             # Валидация user_id
@@ -93,7 +116,13 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             _LOGGER.info("Сброс истории для пользователя %s", user_id)
             
             # Получение менеджера чата
-            chat_manager = hass.data[DOMAIN]["chat_manager"]
+            domain_data = hass.data.get(DOMAIN)
+            if not domain_data:
+                raise Exception("Интеграция не загружена")
+            
+            chat_manager = domain_data["chat_manager"]
+            if not chat_manager:
+                raise Exception("Менеджер чата не инициализирован")
             
             # Сброс истории
             await chat_manager.reset_history(user_id)
