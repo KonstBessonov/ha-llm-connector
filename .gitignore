@@ -5,3 +5,4 @@ __pycache__/
 .hass*
 .DS_Store
 Thumbs.db
+*:Zone.Identifier
