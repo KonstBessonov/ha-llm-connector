@@ -1,7 +1,6 @@
 ask:
   name: Отправить запрос к LLM
   description: Отправка запроса к LLM с сохранением контекста
-  target: false
   fields:
     user_id:
       name: Идентификатор пользователя
@@ -21,7 +20,6 @@ ask:
 reset_history:
   name: Сброс истории
   description: Сброс истории чата для пользователя
-  target: false
   fields:
     user_id:
       name: Идентификатор пользователя
