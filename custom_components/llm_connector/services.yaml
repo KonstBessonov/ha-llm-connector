@@ -1,6 +1,7 @@
 ask:
   name: Отправить запрос к LLM
   description: Отправка запроса к LLM с сохранением контекста
+  target: {}
   fields:
     user_id:
       name: Идентификатор пользователя
@@ -16,10 +17,12 @@ ask:
       example: "Какая сегодня погода?"
       selector:
         text:
+  response: true
 
 reset_history:
   name: Сброс истории
   description: Сброс истории чата для пользователя
+  target: {}
   fields:
     user_id:
       name: Идентификатор пользователя
