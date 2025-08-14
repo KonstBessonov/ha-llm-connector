@@ -139,7 +139,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         DOMAIN,
         "ask",
         handle_ask,
-        schema=SERVICE_ASK_SCHEMA
+        schema=SERVICE_ASK_SCHEMA,
+        supports_response=SupportsResponse.ONLY
     )
     
     hass.services.async_register(
