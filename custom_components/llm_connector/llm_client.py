@@ -15,7 +15,7 @@ class LLMClient:
         base_url: str,
         api_key: Optional[str] = None,
         model: Optional[str] = None,
-        timeout: int = 90
+        timeout: int = 120
     ):
         """Инициализация клиента."""
         self.base_url = base_url.rstrip('/')
