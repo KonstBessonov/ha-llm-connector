@@ -3,7 +3,7 @@
   "name": "LLM Connector",
   "version": "1.0.0",
   "documentation": "https://github.com/KonstBessonov/ha-llm-connector",
-  "dependencies": [],
+  "dependencies": ["voluptuous", "homeassistant"],
   "codeowners": ["@KonstBessonov"],
   "requirements": [],
   "iot_class": "local_polling",
